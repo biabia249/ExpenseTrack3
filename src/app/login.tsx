@@ -1,3 +1,4 @@
+import { useAppState } from '@/hooks/app-state';
 import { useState } from "react";
 import {
     KeyboardAvoidingView,
@@ -11,19 +12,20 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
+  const {signIn}=useAppState();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
 
   function handleLogin() {
-    if (!email.trim() || !password) {
-      setMessage("Completează emailul și parola.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || !password) {
+      setMessage("Introdu un email valid și o parolă pentru demo.");
       return;
     }
 
-    setMessage(
-      "Formular completat! Urmează să conectăm autentificarea."
-    );
+    setMessage('');
+    signIn(email);
+    setPassword('');
   }
 
   return (
@@ -42,6 +44,7 @@ export default function LoginScreen() {
             Cheltuielile tale, într-un singur loc.
           </Text>
 
+          <Text style={[styles.subtitle,{fontSize:12,lineHeight:18}]}>Mod demo, fără verificare pe server. Folosește date fictive. Datele se păstrează doar în sesiunea curentă.</Text>
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
@@ -76,7 +79,7 @@ export default function LoginScreen() {
               pressed && styles.buttonPressed,
             ]}
           >
-            <Text style={styles.buttonText}>Autentificare</Text>
+            <Text style={styles.buttonText}>Continuă în demo →</Text>
           </Pressable>
 
           <Text accessibilityLiveRegion="polite" style={styles.message}>
